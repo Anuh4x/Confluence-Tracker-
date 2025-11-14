@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Confluence Checklist</title>
+<style>
+:root{
+--white:#FFFFFF;
+--dark:#242424;
+--blue-gray:#5C7C89;
+--deep-teal:#1F4959;
+--almost-black:#212b33;
+--glass-bg:rgba(255,255,255,0.06);
+--glass-border:rgba(255,255,255,0.12);
+--accent:#5C7C89;
+}
+body{font-family:Inter,ui-sans-serif,system-ui,Arial;margin:24px;background:var(--almost-black);color:#e6eef8}
+.container{max-width:900px;margin:0 auto;padding:22px;border-radius:18px;
+background:var(--glass-bg);
+backdrop-filter:blur(18px) saturate(160%);
+border:1px solid var(--glass-border);
+box-shadow:0 8px 30px rgba(0,0,0,.4);}
+h1{margin:0 0 10px;font-size:20px}
+p.small{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:10px}
+ul.checks{list-style:none;padding:0;margin:0}
+li.item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px}
+li.item:nth-child(odd){background:rgba(255,255,255,0.01)}
+label{display:flex;align-items:center;gap:10px;flex:1}
+.name{font-weight:600}
+.muted{color:var(--muted);font-size:13px}
+input[type=number]{width:35px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+
+
+/* right panel */
+.stats{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px}
+.circle-wrap{width:170px;height:170px;position:relative}
+svg{transform:rotate(-90deg)}
+.center-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.big{font-size:28px;font-weight:700}
+.sm{color:var(--muted);font-size:13px}
+.breakdown{width:100%;margin-top:6px}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px dashed rgba(255,255,255,0.02)}
+.progress-bar{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+.progress-bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#06b6d4)}
+
+
+footer{margin-top:14px;color:var(--muted);font-size:13px}
+.controls{display:flex;gap:8px;align-items:center}
+button{padding:8px 10px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer}
+.small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 8px}
+
+
+@media (max-width:900px){.grid{grid-template-columns:1fr;}.stats{order:2}}
+  #progressCircle { transition: stroke-dasharray 0.6s ease; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="text-align:center;margin:0 0 10px">Confluence Checklist</h1><br>
+   
+
+    <div class="grid">
+      <div class="card">
+        <div class="controls" style="margin-bottom:10px">
+          <button id="reset">Reset</button>
+          <button id="equalize" class="small-btn">Equal weights</button>
+          <div style="margin-left:auto;color:var(--muted);font-size:13px">Total items: <span id="totalCount">0</span></div>
+        </div>
+
+        <ul class="checks" id="checklist">
+          <!-- items injected by JS for convenience -->
+        </ul>
+
+      </div>
+
+      <div class="card stats">
+        <div class="circle-wrap">
+          <svg width="170" height="170" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.06)" stroke-width="15" fill="none"></circle>
+            <circle id="progressCircle" cx="60" cy="60" r="50" stroke="url(#g)" stroke-width="15" stroke-linecap="round" fill="none" stroke-dasharray="0 314"></circle>
+            <defs>
+              <linearGradient id="g" x1="0" x2="1">
+                <stop offset="0" stop-color="#3b82f6" />
+                <stop offset="1" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="center-text">
+            <div class="big" id="percentText">0%</div>
+            <div class="sm">Confluence score</div>
+          </div>
+        </div>
+
+        <div class="breakdown" id="breakdown"></div>
+
+        
+          <div class="progress-bar" aria-hidden>
+            <i id="barFill"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Default confluence items (you can change these)
+    // === EASY CONFIG SECTION ===
+// Add, remove, or edit your confluences below.
+// Just follow this format: { id:'unique', name:'Label', weight:1, desc:'Explanation' }
+// Example:
+// { id:'ema', name:'EMA 200 Bounce', weight:1, desc:'Price reacting to EMA 200' }
+
+const defaultItems = [
+  { id:'bias', name:'Daily Bias', weight:1, desc:'Trend in high timeframes 1h, 4h, 1D' },
+  { id:'liquidity', name:'Liquidity Swept', weight:1, desc:'High timeframe liquidty or session highs get swept' },
+  { id:'orderBlock', name:'Order Block', weight:1, desc:'Price comes back to the Order Block before continuing the reversal' },
+  { id:'fvg', name:'Fair Value Gap', weight:1, desc:'Price comes back to the FVG before continuing the reversal' },
+  { id:'priceAction', name:'Price Action / Candles', weight:1, desc:'Price structure / rejection candles' },
+  { id:'structure', name:'Market Structure', weight:1, desc:'Break of structure / higher low' },
+  { id:'risk', name:'Risk:Reward / RR', weight:1, desc:'Acceptable R:R and S/L level' }
+  
+];
+
+    const checklistEl = document.getElementById('checklist');
+    const percentText = document.getElementById('percentText');
+    const progressCircle = document.getElementById('progressCircle');
+    const breakdownEl = document.getElementById('breakdown');
+    const barFill = document.getElementById('barFill');
+    const totalCountEl = document.getElementById('totalCount');
+
+    function createItem(item){
+      const li = document.createElement('li');
+      li.className='item';
+      li.innerHTML = `
+        <label>
+          <input type=\"radio\" class="chk" data-id="${item.id}">
+          <div style="display:flex;flex-direction:column">
+            <span class="name">${item.name}</span>
+            <span class="muted">${item.desc}</span>
+          </div>
+        </label>
+        <div style="display:flex;flex-direction:column;align-items:flex-end">
+          <input class="weight" type="number" step="0.1" min="0" value="${item.weight}" title="weight">
+          <div class="muted" style="font-size:12px;margin-top:6px" data-id="pct-${item.id}">0%</div>
+        </div>
+      `;
+      return li;
+    }
+
+    function renderList(items){
+      checklistEl.innerHTML='';
+      items.forEach(it=>checklistEl.appendChild(createItem(it)));
+      totalCountEl.textContent = items.length;
+      attachEvents();
+      recalc();
+    }
+
+    function attachEvents(){
+      checklistEl.querySelectorAll('.chk').forEach(chk=>{
+        chk.addEventListener('change', recalc);
+        chk.addEventListener('click', function(e){
+          if (this.checked && this.dataset.wasChecked === 'true') {
+            this.checked = false;
+            this.dataset.wasChecked = 'false';
+            recalc();
+          } else {
+            this.dataset.wasChecked = this.checked ? 'true' : 'false';
+          }
+        });
+      });
+      checklistEl.querySelectorAll('.weight').forEach(w=>w.addEventListener('input',recalc));
+    }
+
+    function recalc(){
+      const rows = Array.from(checklistEl.querySelectorAll('li.item'));
+      const weights = rows.map(r=>{const wEl=r.querySelector('.weight'); return parseFloat(wEl.value)||0});
+      const totalWeight = weights.reduce((a,b)=>a+b,0) || 0;
+      let checkedWeight = 0;
+      rows.forEach((r,i)=>{
+        const chk = r.querySelector('.chk');
+        const w = weights[i];
+        if (chk.checked) checkedWeight += w;
+        const pctEl = r.querySelector('[data-id^="pct-"]');
+        const pct = totalWeight>0 ? Math.round((w/totalWeight)*100) : 0;
+        pctEl.textContent = pct + '%';
+      });
+
+      const percent = totalWeight > 0 ? Math.round((checkedWeight/totalWeight)*100) : 0;
+      percentText.textContent = percent + '%';
+
+      // Progress circle: circumference = 2πr (r=50 -> c≈314)
+      const circumference = 2 * Math.PI * 50;
+      const dash = (percent/100) * circumference;
+      progressCircle.setAttribute('stroke-dasharray', dash + ' ' + (circumference - dash));
+
+      // bar fill
+      barFill.style.width = percent + '%';
+
+      // breakdown (list checked items and weights)
+      const breakdownLines = rows.map((r,i)=>{
+        const name = r.querySelector('.name').textContent;
+        const chk = r.querySelector('.chk').checked;
+        const w = weights[i];
+        return `<div class="row"><div>${name}${chk?'<span style="color:lightgreen;margin-left:8px">●</span>':''}</div></div>`;
+      }).join('');
+      breakdownEl.innerHTML = breakdownLines;
+    }
+
+    // utility: set equal weights
+    function equalize(){
+      const weightEls = checklistEl.querySelectorAll('.weight');
+      const val = (1).toFixed(1);
+      weightEls.forEach(w=>w.value = val);
+      recalc();
+    }
+
+    document.getElementById('reset').addEventListener('click',()=>{
+      checklistEl.querySelectorAll('.chk').forEach(c=>c.checked=false);
+      // restore default weights
+      const weightEls = checklistEl.querySelectorAll('.weight');
+      defaultItems.forEach((it,i)=>{ if (weightEls[i]) weightEls[i].value = it.weight });
+      recalc();
+    });
+    document.getElementById('equalize').addEventListener('click',equalize);
+
+    // initial render
+    renderList(defaultItems);
+  </script>
+</body>
+</html>
