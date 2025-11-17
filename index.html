@@ -15,13 +15,98 @@
 --glass-border:rgba(255,255,255,0.12);
 --accent:#5C7C89;
 }
-body{font-family:Inter,ui-sans-serif,system-ui,Arial;margin:24px;background:var(--almost-black);color:#e6eef8}
-.container{max-width:900px;margin:0 auto;padding:22px;border-radius:18px;
-background:var(--glass-bg);
-backdrop-filter:blur(18px) saturate(160%);
-border:1px solid var(--glass-border);
-box-shadow:0 8px 30px rgba(0,0,0,.4);}
-h1{margin:0 0 10px;font-size:20px}
+
+body{
+  font-family:Inter,ui-sans-serif,system-ui,Arial;
+  margin:24px;
+  background:var(--almost-black);
+  color:#e6eef8;
+}
+
+/* ========================= */
+/* NOTION STYLE PAIR EDITOR  */
+/* ========================= */
+
+#pairBar {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+}
+
+#pairDisplay {
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.pair-display {
+  text-transform: uppercase;
+}
+
+.pair-input {
+  text-transform: uppercase;
+}
+
+#pairInput {
+  font-size: 20px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e6eef8;
+  padding: 2px 4px;
+  width: 180px;
+  display: none;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+#pairInput:focus {
+  border-bottom: 1px solid var(--accent);
+}
+.edit-icon-img{
+  width:18px;
+  height:16px;
+  object-fit:contain;
+  cursor:pointer;
+  opacity:0.8;
+}
+
+.edit-icon-img:hover{
+  opacity:1;
+}
+
+.pair-display {
+  cursor: pointer;
+}
+
+#editPair {
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 18px;
+}
+#editPair:hover { opacity: 1; }
+
+
+/* ========================= */
+/*  MAIN UI STYLES           */
+/* ========================= */
+
+.container{
+  max-width:900px;
+  margin:60px auto;
+  padding:22px;
+  border-radius:18px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--glass-border);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+}
+
+h1{margin:0 0 10px;font-size:20px;text-align:center}
 p.small{color:var(--muted);margin:0 0 18px}
 .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
 .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:10px}
@@ -33,16 +118,29 @@ label{display:flex;align-items:center;gap:10px;flex:1}
 .item .chk { margin-top: 12px; }
 .name{font-weight:600}
 .muted{color:var(--muted);font-size:13px}
-input[type=number]{width:35px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+
+input[type=number]{
+  width:35px;
+  padding:6px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:transparent;
+  color:inherit;
+}
 
 .bias-options{display:flex;flex-direction:column;gap:4px;margin-top:6px}
 .bias-line{display:flex;align-items:center;gap:10px;font-size:13px}
 .bias-line label{display:flex;align-items:center;gap:4px;cursor:pointer}
 .bias-time{width:30px;font-weight:600}
 
+.stats{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  padding:18px;
+}
 
-/* right panel */
-.stats{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px}
 .circle-wrap{width:170px;height:170px;position:relative}
 svg{transform:rotate(-90deg)}
 .center-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -50,76 +148,94 @@ svg{transform:rotate(-90deg)}
 .sm{color:var(--muted);font-size:13px}
 .breakdown{width:100%;margin-top:6px}
 .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px dashed rgba(255,255,255,0.02)}
-.progress-bar{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
-.progress-bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#06b6d4)}
 
+.progress-bar{
+  height:10px;
+  background:rgba(255,255,255,0.03);
+  border-radius:999px;
+  overflow:hidden;
+}
+.progress-bar > i{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--accent),#06b6d4);
+}
 
 footer{margin-top:14px;color:var(--muted);font-size:13px}
 .controls{display:flex;gap:8px;align-items:center}
 button{padding:8px 10px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer}
 .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 8px}
 
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr;}
+  .stats{order:2}
+}
 
-@media (max-width:900px){.grid{grid-template-columns:1fr;}.stats{order:2}}
-  #progressCircle { transition: stroke-dasharray 0.6s ease; }
+#progressCircle { transition: stroke-dasharray 0.6s ease; }
 </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1 style="text-align:center;margin:0 0 10px">Confluence Checklist</h1><br>
-   
 
-    <div class="grid">
-      <div class="card">
-        <div class="controls" style="margin-bottom:10px">
-          <button id="reset">Reset</button>
-          <button id="equalize" class="small-btn">Equal weights</button>
-          <div style="margin-left:auto;color:var(--muted);font-size:13px">Total items: <span id="totalCount">0</span></div>
+<!-- ========================= -->
+<!--     CURRENCY PAIR BAR     -->
+<!-- ========================= -->
+<div id="pairBar">
+  <span id="editPair"><img src="image.png" class="edit-icon-img"></span>
+  <span id="pairDisplay" class="pair-display">Set pair</span>
+  <input id="pairInput" type="text" placeholder="Type pair..." />
+</div>
+
+<div class="container">
+  <h1>Confluence Checklist</h1>
+  <br>
+
+  <div class="grid">
+    <div class="card">
+      <div class="controls" style="margin-bottom:10px">
+        <button id="reset">Reset</button>
+        <button id="equalize" class="small-btn">Equal weights</button>
+        <div style="margin-left:auto;color:var(--muted);font-size:13px">
+          Total items: <span id="totalCount">0</span>
         </div>
-
-        <ul class="checks" id="checklist">
-          <!-- items injected by JS for convenience -->
-        </ul>
-
       </div>
 
-      <div class="card stats">
-        <div class="circle-wrap">
-          <svg width="170" height="170" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.06)" stroke-width="15" fill="none"></circle>
-            <circle id="progressCircle" cx="60" cy="60" r="50" stroke="url(#g)" stroke-width="15" stroke-linecap="round" fill="none" stroke-dasharray="0 314"></circle>
-            <defs>
-              <linearGradient id="g" x1="0" x2="1">
-                <stop offset="0" stop-color="#3b82f6" />
-                <stop offset="1" stop-color="#06b6d4" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="center-text">
-            <div class="big" id="percentText">0%</div>
-            <div class="sm">Confluence score</div>
-          </div>
-        </div>
+      <ul class="checks" id="checklist"></ul>
+    </div>
 
-        <div class="breakdown" id="breakdown"></div>
+    <div class="card stats">
+      <div class="circle-wrap">
+        <svg width="170" height="170" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.06)" stroke-width="15" fill="none"></circle>
+          <circle id="progressCircle" cx="60" cy="60" r="50" stroke="url(#g)" stroke-width="15" stroke-linecap="round" fill="none" stroke-dasharray="0 314"></circle>
+          <defs>
+            <linearGradient id="g" x1="0" x2="1">
+              <stop offset="0" stop-color="#3b82f6" />
+              <stop offset="1" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
 
-        
-          <div class="progress-bar" aria-hidden>
-            <i id="barFill"></i>
-          </div>
+        <div class="center-text">
+          <div class="big" id="percentText">0%</div>
+          <div class="sm">Confluence score</div>
         </div>
+      </div>
+
+      <div class="breakdown" id="breakdown"></div>
+
+      <div class="progress-bar" aria-hidden>
+        <i id="barFill"></i>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // Default confluence items (you can change these)
-    // === EASY CONFIG SECTION ===
-// Add, remove, or edit your confluences below.
-// Just follow this format: { id:'unique', name:'Label', weight:1, desc:'Explanation' }
-// Example:
-// { id:'ema', name:'EMA 200 Bounce', weight:1, desc:'Price reacting to EMA 200' }
-
+<script>
+// =========================
+// DEFAULT ITEMS
+// =========================
 const defaultItems = [
   { id:'bias', name:'Daily Bias', weight:1.1, desc:'Trend in high timeframes align 1h, 4h, 1D', bias:true },
   { id:'liquidity', name:'Liquidity Swept', weight:1, desc:'High timeframe liquidty or session highs get swept' },
@@ -128,17 +244,57 @@ const defaultItems = [
   { id:'fvg', name:'Fair Value Gap', weight:1, desc:'Price comes back to the FVG before continuing the reversal' },
   { id:'equilibrium', name:'Equilibrium', weight:1, desc:'Shows where big money is to buy again' },
   { id:'risk', name:'Risk:Reward / RR', weight:1, desc:'Acceptable R:R and Stoploss set' }
-  
 ];
 
-    const checklistEl = document.getElementById('checklist');
-    const percentText = document.getElementById('percentText');
-    const progressCircle = document.getElementById('progressCircle');
-    const breakdownEl = document.getElementById('breakdown');
-    const barFill = document.getElementById('barFill');
-    const totalCountEl = document.getElementById('totalCount');
+const checklistEl = document.getElementById('checklist');
+const percentText = document.getElementById('percentText');
+const progressCircle = document.getElementById('progressCircle');
+const breakdownEl = document.getElementById('breakdown');
+const barFill = document.getElementById('barFill');
+const totalCountEl = document.getElementById('totalCount');
 
-    function createBiasBlock(){
+// =========================
+// PAIR EDITOR LOGIC
+// =========================
+const editBtn = document.getElementById("editPair");
+const pairDisplay = document.getElementById("pairDisplay");
+const pairInput = document.getElementById("pairInput");
+
+function startEditing() {
+  pairDisplay.style.display = "none";
+  pairInput.style.display = "inline-block";
+  pairInput.value = pairDisplay.textContent === "Set pair" ? "" : pairDisplay.textContent;
+  pairInput.focus();
+}
+
+
+editBtn.addEventListener("click", startEditing);
+pairDisplay.addEventListener("click", startEditing);
+
+pairInput.addEventListener("input", () => {
+  let val = pairInput.value.toUpperCase().replace(/[^A-Z]/g, ""); // only letters
+  if (val.length > 3) {
+    val = val.slice(0,3) + "/" + val.slice(3,6); // add "/" after first 3 letters
+  }
+  pairInput.value = val;
+});
+
+pairInput.addEventListener("blur", () => {
+  const val = pairInput.value.trim().toUpperCase();
+  pairDisplay.textContent = val || "SET PAIR";
+  pairDisplay.style.display = "inline-block";
+  pairInput.style.display = "none";
+});
+
+pairInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") pairInput.blur();
+});
+
+
+// =========================
+// BIAS RADIO BLOCK BUILDER
+// =========================
+function createBiasBlock(){
   return `
     <div class="bias-options">
       <div class="bias-line"><span class="bias-time">1D</span>
@@ -157,35 +313,35 @@ const defaultItems = [
   `;
 }
 
-    function createItem(item){
-      const li = document.createElement('li');
-      li.className='item';
-      li.innerHTML = `
-        <label>
-          <input type=\"radio\" class="chk" data-id="${item.id}">
-          <div style="display:flex;flex-direction:column">
-            <span class="name">${item.name}</span>
-            <span class="muted">${item.desc}</span>
-             ${item.bias ? createBiasBlock() : ''}  
-          </div>
-        </label>
-        <div style="display:flex;flex-direction:column;align-items:flex-end">
-          <input class="weight" type="number" step="0.1" min="0" value="${item.weight}" title="weight">
-          <div class="muted" style="font-size:12px;margin-top:6px" data-id="pct-${item.id}">0%</div>
-        </div>
-      `;
-      return li;
-    }
+function createItem(item){
+  const li = document.createElement('li');
+  li.className='item';
+  li.innerHTML = `
+    <label>
+      <input type="radio" class="chk" data-id="${item.id}">
+      <div style="display:flex;flex-direction:column">
+        <span class="name">${item.name}</span>
+        <span class="muted">${item.desc}</span>
+        ${item.bias ? createBiasBlock() : ''}
+      </div>
+    </label>
+    <div style="display:flex;flex-direction:column;align-items:flex-end">
+      <input class="weight" type="number" step="0.1" min="0" value="${item.weight}">
+      <div class="muted" style="font-size:12px;margin-top:6px" data-id="pct-${item.id}">0%</div>
+    </div>
+  `;
+  return li;
+}
 
-    function renderList(items){
-      checklistEl.innerHTML='';
-      items.forEach(it=>checklistEl.appendChild(createItem(it)));
-      totalCountEl.textContent = items.length;
-      attachEvents();
-      recalc();
-    }
+function renderList(items){
+  checklistEl.innerHTML='';
+  items.forEach(it=>checklistEl.appendChild(createItem(it)));
+  totalCountEl.textContent = items.length;
+  attachEvents();
+  recalc();
+}
 
-    function makeBiasRadiosUncheckable() {
+function makeBiasRadiosUncheckable() {
   document.querySelectorAll('.bias-options input[type="radio"]').forEach(radio => {
     radio.addEventListener("click", function () {
       if (this.checked && this.dataset.wasChecked === "true") {
@@ -199,78 +355,71 @@ const defaultItems = [
   });
 }
 
-    function attachEvents(){
-      checklistEl.querySelectorAll('.chk').forEach(chk=>{
-        chk.addEventListener('change', recalc);
-        chk.addEventListener('click', function(e){
-          if (this.checked && this.dataset.wasChecked === 'true') {
-            this.checked = false;
-            this.dataset.wasChecked = 'false';
-            recalc();
-          } else {
-            this.dataset.wasChecked = this.checked ? 'true' : 'false';
-          }
-        });
-      });
-      checklistEl.querySelectorAll('.weight').forEach(w=>w.addEventListener('input',recalc));
-
-      makeBiasRadiosUncheckable();
-    }
-
-    function recalc(){
-      const rows = Array.from(checklistEl.querySelectorAll('li.item'));
-      const weights = rows.map(r=>{const wEl=r.querySelector('.weight'); return parseFloat(wEl.value)||0});
-      const totalWeight = weights.reduce((a,b)=>a+b,0) || 0;
-      let checkedWeight = 0;
-      rows.forEach((r,i)=>{
-        const chk = r.querySelector('.chk');
-        const w = weights[i];
-        if (chk.checked) checkedWeight += w;
-        const pctEl = r.querySelector('[data-id^="pct-"]');
-        const pct = totalWeight>0 ? Math.round((w/totalWeight)*100) : 0;
-        pctEl.textContent = pct + '%';
-      });
-
-      const percent = totalWeight > 0 ? Math.round((checkedWeight/totalWeight)*100) : 0;
-      percentText.textContent = percent + '%';
-
-      // Progress circle: circumference = 2πr (r=50 -> c≈314)
-      const circumference = 2 * Math.PI * 50;
-      const dash = (percent/100) * circumference;
-      progressCircle.setAttribute('stroke-dasharray', dash + ' ' + (circumference - dash));
-
-      // bar fill
-      barFill.style.width = percent + '%';
-
-      // breakdown (list checked items and weights)
-      const breakdownLines = rows.map((r,i)=>{
-        const name = r.querySelector('.name').textContent;
-        const chk = r.querySelector('.chk').checked;
-        const w = weights[i];
-        return `<div class="row"><div>${name}${chk?'<span style="color:lightgreen;margin-left:8px">●</span>':''}</div></div>`;
-      }).join('');
-      breakdownEl.innerHTML = breakdownLines;
-    }
-
-    // utility: set equal weights
-    function equalize(){
-      const weightEls = checklistEl.querySelectorAll('.weight');
-      const val = (1).toFixed(1);
-      weightEls.forEach(w=>w.value = val);
-      recalc();
-    }
-
-    document.getElementById('reset').addEventListener('click',()=>{
-      checklistEl.querySelectorAll('.chk').forEach(c=>c.checked=false);
-      // restore default weights
-      const weightEls = checklistEl.querySelectorAll('.weight');
-      defaultItems.forEach((it,i)=>{ if (weightEls[i]) weightEls[i].value = it.weight });
-      recalc();
+function attachEvents(){
+  checklistEl.querySelectorAll('.chk').forEach(chk=>{
+    chk.addEventListener('change', recalc);
+    chk.addEventListener('click', function(){
+      if (this.checked && this.dataset.wasChecked === 'true') {
+        this.checked = false;
+        this.dataset.wasChecked = 'false';
+        recalc();
+      } else {
+        this.dataset.wasChecked = this.checked ? 'true' : 'false';
+      }
     });
-    document.getElementById('equalize').addEventListener('click',equalize);
+  });
 
-    // initial render
-    renderList(defaultItems);
-  </script>
+  checklistEl.querySelectorAll('.weight').forEach(w=>w.addEventListener('input',recalc));
+  makeBiasRadiosUncheckable();
+}
+
+function recalc(){
+  const rows = Array.from(checklistEl.querySelectorAll('li.item'));
+  const weights = rows.map(r=>parseFloat(r.querySelector('.weight').value)||0);
+  const totalWeight = weights.reduce((a,b)=>a+b,0) || 0;
+  let checkedWeight = 0;
+
+  rows.forEach((r,i)=>{
+    const chk = r.querySelector('.chk');
+    const w = weights[i];
+    if (chk.checked) checkedWeight += w;
+    const pctEl = r.querySelector('[data-id^="pct-"]');
+    const pct = totalWeight>0 ? Math.round((w/totalWeight)*100) : 0;
+    pctEl.textContent = pct + '%';
+  });
+
+  const percent = totalWeight>0 ? Math.round((checkedWeight/totalWeight)*100) : 0;
+  percentText.textContent = percent + '%';
+
+  const circumference = 2 * Math.PI * 50;
+  const dash = (percent/100)*circumference;
+  progressCircle.setAttribute('stroke-dasharray', dash + ' ' + (circumference-dash));
+
+  barFill.style.width = percent + '%';
+
+  breakdownEl.innerHTML = rows.map((r,i)=>{
+    const name = r.querySelector('.name').textContent;
+    const chk = r.querySelector('.chk').checked;
+    return `<div class="row"><div>${name}${chk?'<span style="color:lightgreen;margin-left:8px">●</span>':''}</div></div>`;
+  }).join('');
+}
+
+function equalize(){
+  const weightEls = checklistEl.querySelectorAll('.weight');
+  weightEls.forEach(w=>w.value = (1).toFixed(1));
+  recalc();
+}
+
+document.getElementById('reset').addEventListener('click',()=>{
+  checklistEl.querySelectorAll('.chk').forEach(c=>c.checked=false);
+  checklistEl.querySelectorAll('.weight').forEach((w,i)=>w.value = defaultItems[i].weight);
+  recalc();
+});
+
+document.getElementById('equalize').addEventListener('click',equalize);
+
+renderList(defaultItems);
+</script>
+
 </body>
 </html>
